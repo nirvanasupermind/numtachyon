@@ -306,7 +306,7 @@ NT.Tensor.tril = afunc (self) {
 NT.Tensor.triu = afunc (self) {
     var data = [];
     for(var i = 0; i < VectorUtils.size(self.data); i++) {
-        if(i % self.shape[1] > Math.floor(i / self.shape[1])) {
+        if(i % self.shape[1] < Math.floor(i / self.shape[1])) {
             VectorUtils.pushBack(data, 0);
         } else {
             VectorUtils.pushBack(data, self.data[i]);
@@ -451,3 +451,4 @@ NT.Tensor.toString = afunc (self) {
 NT.Tensor.reshape = afunc (self, newShape) {
     return NT.Tensor.fromShapeAndData(newShape, self.data);
 };
+
