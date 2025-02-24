@@ -156,7 +156,6 @@ NT.Complex.asinh = afunc (self) {
     return self.add(t1).ln();
 };
 
-
 NT.Complex.acosh = afunc (self) {
     var t1 = self.mul(self).sub(NT.Complex.ONE).sqrt(); 
     return self.add(t1).ln();
@@ -181,6 +180,30 @@ NT.Complex.I_2 = NT.Complex.fromRect(0, 0.5);
 NT.Tensor = {};
 
 NT.Tensor.fromShapeAndData = afunc (self, shape, data) {
+    return {
+        "shape": shape,
+        "data": data,
+        "proto": NT.Tensor
+    };
+};
+
+NT.Tensor.fromNested = afunc (self, vec) {
+    if(typeOf(vec) == 0) {
+        return {"shape": [], "data": vec};
+    }
+
+    var size = VectorUtils.size(vec);
+
+    if(typeOf(vec[0]) == 0) {
+        return {"shape": [size], "data": vec};
+    }
+    
+    var fromFirstElem = NT.Tensor.fromNested(vec[0]);
+    var shape = VectorUtils.concat([size],  fromFirstElem.shape);
+    var data = fromFirstElem.data;
+    for(var i = 1; i < size; i++) {
+        data = VectorUtils.concat(data, NT.Tensor.fromNested(vec[i]).data);
+    }
     return {
         "shape": shape,
         "data": data,
@@ -315,6 +338,22 @@ NT.Tensor.triu = afunc (self) {
     return NT.Tensor.fromShapeAndData(self.shape, data);
 };
 
+NT.Tensor.vander = afunc (self, v, n, increasing) {
+    if(increasing == null) {
+        increasing = false;
+    }
+    var vSize = VectorUtils.size(v);
+    var data = [];
+    for(var i = 0; i < n * vSize; i++) {
+        if(increasing) {
+            VectorUtils.pushBack(data, Math.pow(v[Math.floor(i / n)], i % n));
+        } else {
+            VectorUtils.pushBack(data, Math.pow(v[Math.floor(i / n)], n - (i % n) - 1));
+        }
+    }
+    return NT.Tensor.fromShapeAndData([n, vSize], data);
+};
+
 NT.Tensor.transform = afunc (self, fn) {
     return NT.Tensor.fromShapeAndData(self.shape, VectorUtils.transform(self.data, fn));
 };
@@ -361,8 +400,114 @@ NT.Tensor.mod = afunc (self, other) {
     });
 };
 
-NT.Tensor.dot = afunc (self, other) {
-    return self.mul(other).sum();
+NT.Tensor.pow = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return Math.pow(x, y);
+    });
+};
+
+NT.Tensor.sqrt = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.sqrt(x);
+    });
+};
+
+NT.Tensor.cbrt = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.cbrt(x);
+    });
+};
+
+NT.Tensor.log = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.log(x);
+    });
+};
+
+NT.Tensor.log2 = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.log2(x);
+    });
+};
+
+NT.Tensor.log10 = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.log10(x);
+    });
+};
+
+NT.Tensor.sin = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.sin(x);
+    });
+};
+
+NT.Tensor.cos = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.cos(x);
+    });
+};
+
+NT.Tensor.tan = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.tan(x);
+    });
+};
+
+NT.Tensor.asin = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.asin(x);
+    });
+};
+
+NT.Tensor.acos = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.acos(x);
+    });
+};
+
+NT.Tensor.atan = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.atan(x);
+    });
+};
+
+NT.Tensor.sinh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.sinh(x);
+    });
+};
+
+
+NT.Tensor.cosh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.cosh(x);
+    });
+};
+
+
+NT.Tensor.tanh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.tanh(x);
+    });
+};
+
+NT.Tensor.asinh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.asinh(x);
+    });
+};
+
+NT.Tensor.acosh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.acosh(x);
+    });
+};
+
+NT.Tensor.atanh = afunc (self) {
+    return self.transform(afunc (x) {
+        return Math.atanh(x);
+    });
 };
 
 NT.Tensor.sum = afunc (self) {
@@ -381,6 +526,19 @@ NT.Tensor.mean = afunc (self) {
     return self.sum() / VectorUtils.size(self.data);
 };
 
+NT.Tensor.variance = afunc (self) {
+    var temp = self.sub(self.mean());
+    return temp.mul(temp);
+};
+
+
+NT.Tensor.std = afunc (self) {
+    return self.variance().sqrt();
+};
+
+NT.Tensor.dot = afunc (self, other) {
+    return self.mul(other).sum();
+};
 
 NT.Tensor.ndim = afunc (self) {
     return VectorUtils.size(self.shape);
@@ -430,6 +588,12 @@ NT.Tensor.set = afunc (self, idx, val) {
     }
 };
 
+NT.Tensor.reshape = afunc (self, newShape) {
+    return NT.Tensor.fromShapeAndData(newShape, self.data);
+};
+
+
+
 NT.Tensor.toString = afunc (self) {
     if(self.ndim() == 1) {
         return StringUtils.repr(self.data);
@@ -446,9 +610,3 @@ NT.Tensor.toString = afunc (self) {
         return result;
     } 
 };
-
-
-NT.Tensor.reshape = afunc (self, newShape) {
-    return NT.Tensor.fromShapeAndData(newShape, self.data);
-};
-
