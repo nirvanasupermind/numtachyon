@@ -1,0 +1,453 @@
+var NT = {};
+// COMPLEX
+NT.Complex = {};
+
+NT.Complex.fromRect = afunc (self, real, imag) {
+    return {
+        "real": real,
+        "imag": imag,
+        "proto": NT.Complex
+    };
+};
+
+NT.Complex.neg = afunc (self) {
+    return NT.Complex.fromRect(-self.real, -self.imag);
+};
+
+NT.Complex.add = afunc (self, other) {
+    if(typeOf(other) == 0) {
+        return NT.Complex.fromRect(self.real + other, self.imag + other); 
+    } else {
+        return NT.Complex.fromRect(self.real + other.real, self.imag + other.imag);
+    } 
+};
+
+NT.Complex.sub = afunc (self, other) {
+    if(typeOf(other) == 0) {
+        return NT.Complex.fromRect(self.real - other, self.imag - other); 
+    } else {
+        return NT.Complex.fromRect(self.real - other.real, self.imag - other.imag);
+    }
+};
+
+NT.Complex.mul = afunc (self, other) {
+    if(typeOf(other) == 0) {
+        return NT.Complex.fromRect(self.real * other, self.imag * other); 
+    } else {
+        return NT.Complex.fromRect(self.real * other.real - self.imag * other.imag, self.real * other.imag + self.imag * other.real); 
+    }
+};
+
+NT.Complex.div = afunc (self, other) {
+    if(typeOf(other) == 0) {
+        return NT.Complex.fromRect(self.real / other, self.imag / other); 
+    } else {
+        var otherNorm = other.real * other.real + other.imag * other.imag;
+        var resultReal = (self.real * other.real + self.imag * other.imag) / otherNorm;
+        var resultImag =  (self.imag * other.real - self.real * other.imag) / otherNorm;
+        return NT.Complex.fromRect(resultReal, resultImag);
+    }
+};
+
+NT.Complex.eq = afunc (self, other) {
+    return self.real == other.real && self.imag == other.imag;
+};
+
+NT.Complex.ne = afunc (self, other) {
+    return !self.eq(other);
+};
+
+NT.Complex.abs = afunc (self) {
+    return Math.sqrt(self.real * self.real + self.imag * self.imag);
+};
+
+NT.Complex.arg = afunc (self) {
+    return Math.atan2(self.imag, self.real);
+};
+
+NT.Complex.norm = afunc (self) {
+    return self.real * self.real + self.imag * self.imag;
+};
+
+NT.Complex.conj = afunc (self) {
+    return NT.Complex.fromRect(self.real, -self.imag);
+};
+
+NT.Complex.exp = afunc (self) {
+    var expReal = Math.exp(self.real);
+    return NT.Complex.fromRect(expReal * Math.cos(self.imag), expReal * Math.sin(self.imag));
+};
+
+NT.Complex.log = afunc (self) {
+    return NT.Complex.fromRect(Math.log(self.abs()), self.arg());
+};
+
+NT.Complex.pow = afunc (self, other) {
+    return self.log().mul(other).exp();
+};
+
+NT.Complex.sqrt = afunc (self) {
+    return self.pow(0.5);
+};
+
+NT.Complex.cbrt = afunc (self) {
+    return self.pow(0.3333333333333333);
+};
+
+NT.Complex.sin = afunc (self) {
+    return NT.Complex.fromRect(Math.sin(self.real) * Math.cosh(self.imag), Math.cos(self.real) * Math.sinh(self.imag));
+};
+
+NT.Complex.cos = afunc (self) {
+    return NT.Complex.fromRect(Math.cos(self.real) * Math.cosh(self.imag), Math.sin(self.real) * Math.sinh(self.imag));
+};
+
+NT.Complex.tan = afunc (self) {
+    return self.sin() / self.cos();
+};
+
+NT.Complex.asin = afunc (self) {
+    var t1 = self.mul(NT.Complex.I);
+    var t2 = NT.Complex.ONE.sub(self.mul(self)).sqrt(); 
+    return NT.Complex.I.mul(t1.add(t2).log()).neg();
+};
+
+NT.Complex.acos = afunc (self) {
+    var t1 = NT.Complex.ONE.sub(self.mul(self)).sqrt().mul(NT.Complex.I); 
+    return NT.Complex.I.mul(self.add(t1).log()).neg();
+};
+
+NT.Complex.atan = afunc (self) {
+    var t1 = NT.Complex.ONE.sub(self.mul(NT.Complex.I));
+    var t2 = NT.Complex.ONE.add(self.mul(NT.Complex.I));
+    return NT.Complex.I_2.mul(t1.div(t2).log());
+};
+
+NT.Complex.sinh = afunc (self) {
+    return self.exp().sub(self.neg().exp()).div(2);
+};
+
+NT.Complex.cosh = afunc (self) {
+    return self.exp().add(self.neg().exp()).div(2);
+};
+
+NT.Complex.tanh = afunc (self) {
+    var selfExp = self.exp();
+    var selfNegExp = self.neg().exp();
+    return selfExp.sub(selfNegExp).div(selfExp.add(selfNegExp));
+};
+
+NT.Complex.sinh = afunc (self) {
+    return self.exp().sub(self.neg().exp()).div(2);
+};
+
+NT.Complex.cosh = afunc (self) {
+    return self.exp().add(self.neg().exp()).div(2);
+};
+
+NT.Complex.tanh = afunc (self) {
+    var selfExp = self.exp();
+    var selfNegExp = self.neg().exp();
+    return selfExp.sub(selfNegExp).div(selfExp.add(selfNegExp));
+};
+
+NT.Complex.asinh = afunc (self) {
+    var t1 = self.mul(self).add(NT.Complex.ONE).sqrt(); 
+    return self.add(t1).ln();
+};
+
+
+NT.Complex.acosh = afunc (self) {
+    var t1 = self.mul(self).sub(NT.Complex.ONE).sqrt(); 
+    return self.add(t1).ln();
+};
+
+NT.Complex.atanh = afunc (self) {
+    var t1 = self.add(1);
+    var t2 = NT.Complex.ONE.sub(self);
+    return t1.div(t2).ln().div(2);
+};
+
+NT.Complex.toString = afunc (self) {
+    return StringUtils.concat(StringUtils.concat(StringUtils.concat(StringUtils.repr(self.real), "+"), StringUtils.repr(self.imag)), "i");
+};
+
+NT.Complex.ZERO = NT.Complex.fromRect(0, 0);
+NT.Complex.ONE = NT.Complex.fromRect(1, 0);
+NT.Complex.I = NT.Complex.fromRect(0, 1);
+NT.Complex.I_2 = NT.Complex.fromRect(0, 0.5);
+
+// TENSOR
+NT.Tensor = {};
+
+NT.Tensor.fromShapeAndData = afunc (self, shape, data) {
+    return {
+        "shape": shape,
+        "data": data,
+        "proto": NT.Tensor
+    };
+};
+
+
+NT.Tensor.eye = afunc (self, n, m) {
+    if(m == null) {
+        m = n;
+    }
+    var data = [];
+    for(var i = 0; i < n * m; i++) {
+        if(i % (m + 1) == 0) {
+            VectorUtils.pushBack(data, 1);
+        } else {
+            VectorUtils.pushBack(data, 0);
+        }
+        
+    }
+    return NT.Tensor.fromShapeAndData([n, m], data);
+};
+
+NT.Tensor.ones = afunc (self, shape) {
+    return NT.Tensor.full(shape, 1);
+};
+
+NT.Tensor.onesLike = afunc (self, a) {
+    return NT.Tensor.fullLike(a, 1);
+};
+
+NT.Tensor.zeros = afunc (self, shape) {
+    return NT.Tensor.full(shape, 0);
+};
+
+NT.Tensor.zerosLike = afunc (self, a) {
+    return NT.Tensor.fullLike(a, 0);
+};
+
+NT.Tensor.full = afunc (self, shape, fillValue) {
+    var dataSize = VectorUtils.accumulate(shape, 0, afunc (x, y) {
+        return x + y;
+    });
+    var data = [];
+    for(var i = 0; i < dataSize; i++) {
+        VectorUtils.pushBack(data, fillValue);
+    }
+    return NT.Tensor.fromShapeAndData(shape, data);
+};
+
+NT.Tensor.fullLike = afunc (self, a, fillValue) {
+    return NT.Tensor.full(a.shape, fillValue);
+};
+
+NT.Tensor.fromString = afunc (self, str, sep) {
+    var data = VectorUtils.transform(StringUtils.split(str, sep), afunc (x) { return StringUtils.toNumber(x); });
+    return NT.Tensor.fromShapeAndData([VectorUtils.size(data)], data);
+};
+
+NT.Tensor.arange = afunc (self, start, end, step) {
+    var data = [];
+    for(var i = start; i < end; i += step) {
+        VectorUtils.pushBack(data, i);
+    }
+    return NT.Tensor.fromShapeAndData([end - start], data);
+};
+
+NT.Tensor.linspace = afunc (self, start, stop, num) {
+    var data = [];
+    for(var i = start; i <= stop; i += (stop - start)/(num - 1)) {
+        VectorUtils.pushBack(data, i);
+    }
+    return NT.Tensor.fromShapeAndData([num], data);
+};
+
+NT.Tensor.logspace = afunc (self, start, stop, num, base) {
+    return NT.Tensor.linspace(start, stop, num).transform(afunc (x) { return Math.pow(base, x);});
+};
+
+NT.Tensor.geomspace = afunc (self, start, stop, num, base) {
+    return NT.Tensor.linspace(Math.pow(base, start), Math.pow(base, stop), num).transform(afunc (x) { return Math.pow(base, x); });
+};
+
+NT.Tensor.diag = afunc (self, v) {
+    var vSize = VectorUtils.size(v.data);
+    var data = [];
+    var j = 0;
+    for(var i = 0; i < vSize * vSize; i++) {
+        if(i % (vSize + 1) == 0) {
+            VectorUtils.pushBack(data, v.data[j]);
+            j++;
+        } else {
+            VectorUtils.pushBack(data, 0);
+        }
+    }
+    return NT.Tensor.fromShapeAndData([vSize,vSize], data);
+};
+
+NT.Tensor.tri = afunc (self, n, m, k) {
+    if(m == null) {
+        m = n;
+    }
+    if(k == null) {
+        k = 0;
+    }
+    var data = [];
+    for(var i = 0; i < n * m; i++) {
+        if(i % m <= Math.floor(i / m) + k) {
+            VectorUtils.pushBack(data, 1);
+        } else {
+            VectorUtils.pushBack(data, 0);
+        }
+        
+    }
+    return NT.Tensor.fromShapeAndData([n, m], data);
+};
+
+NT.Tensor.tril = afunc (self) {
+    return NT.Tensor.tri(self.shape[0], self.shape[1]).mul(self);
+};
+
+NT.Tensor.triu = afunc (self) {
+    var data = [];
+    for(var i = 0; i < VectorUtils.size(self.data); i++) {
+        if(i % self.shape[1] > Math.floor(i / self.shape[1])) {
+            VectorUtils.pushBack(data, 0);
+        } else {
+            VectorUtils.pushBack(data, self.data[i]);
+        }
+    }
+    return NT.Tensor.fromShapeAndData(self.shape, data);
+};
+
+NT.Tensor.transform = afunc (self, fn) {
+    return NT.Tensor.fromShapeAndData(self.shape, VectorUtils.transform(self.data, fn));
+};
+
+NT.Tensor.binaryTransform = afunc (self, other, fn) {
+    if(typeOf(other) == 0) {
+        return self.transform(afunc (x) { return fn(x, other); });
+    } else {
+        var resultData = [];
+        for(var i = 0; i < VectorUtils.size(other.data); i++) {
+            VectorUtils.pushBack(resultData, fn(self.data[i], other.data[i]));
+        }
+        return NT.Tensor.fromShapeAndData(self.shape, resultData);
+    }
+};
+
+NT.Tensor.add = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return x + y;
+    });
+};
+
+NT.Tensor.sub = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return x - y;
+    });
+};
+
+NT.Tensor.mul = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return x * y;
+    });
+};
+
+NT.Tensor.div = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return x / y;
+    });
+};
+
+NT.Tensor.mod = afunc (self, other) {
+    return self.binaryTransform(other, afunc (x, y) {
+        return x % y;
+    });
+};
+
+NT.Tensor.dot = afunc (self, other) {
+    return self.mul(other).sum();
+};
+
+NT.Tensor.sum = afunc (self) {
+    return VectorUtils.accumulate(self.data, 0, afunc (x, y) {
+        return x + y;
+    });
+};
+
+NT.Tensor.prod = afunc (self) {
+    return VectorUtils.accumulate(self.data, 1, afunc (x, y) {
+        return x * y;
+    });
+};
+
+NT.Tensor.mean = afunc (self) {
+    return self.sum() / VectorUtils.size(self.data);
+};
+
+
+NT.Tensor.ndim = afunc (self) {
+    return VectorUtils.size(self.shape);
+};
+
+NT.Tensor.get = afunc (self, idx) {
+    var idxSize = VectorUtils.size(idx);
+    var selfNdim = self.ndim();
+    var idxStart = 0;
+    var factor = 1;
+    for(var i = 0; i < selfNdim; i++) {
+        if((selfNdim - i - 1) < idxSize) {
+            idxStart += idx[selfNdim - i - 1] * factor;
+        }
+        factor *= self.shape[i];
+    }    
+    var offset = 1;
+    for(var i = idxSize; i < selfNdim; i++) {
+        offset *= self.shape[i]; 
+    }
+    var resultShape = VectorUtils.subvec(self.shape, idxSize, selfNdim - idxSize);
+    var resultData = VectorUtils.subvec(self.data, idxStart, offset);
+    return NT.Tensor.fromShapeAndData(resultShape, resultData);
+};
+
+NT.Tensor.set = afunc (self, idx, val) {
+    var idxSize = VectorUtils.size(idx);
+    var selfNdim = self.ndim();
+    var idxStart = 0;
+    var factor = 1;
+    for(var i = 0; i < selfNdim; i++) {
+        if((selfNdim - i - 1) < idxSize) {
+            idxStart += idx[selfNdim - i - 1] * factor;
+        }
+        factor *= self.shape[i];
+    }
+    if(typeOf(val) == 0) {
+        self.data[idxStart] = val;
+    } else {   
+        var offset = 1;
+        for(var i = idxSize; i < selfNdim; i++) {
+            offset *= self.shape[i]; 
+        }
+        var idxEnd = idxStart + offset;
+        var temp = VectorUtils.concat(VectorUtils.subvec(self.data, 0, idxStart), val.data);
+        self.data = VectorUtils.concat(temp, VectorUtils.subvec(self.data, idxEnd, VectorUtils.size(self.data) - idxEnd));
+    }
+};
+
+NT.Tensor.toString = afunc (self) {
+    if(self.ndim() == 1) {
+        return StringUtils.repr(self.data);
+    } else {
+        var result = "[";
+        for(var i = 0; i < self.shape[0]; i++) {
+            result = StringUtils.concat(result, self.get([i]).toString());
+            if(i != self.shape[0] - 1) {
+                result = StringUtils.concat(result, ",");
+            } else {
+                result = StringUtils.concat(result, "]");
+            }
+        }
+        return result;
+    } 
+};
+
+
+NT.Tensor.reshape = afunc (self, newShape) {
+    return NT.Tensor.fromShapeAndData(newShape, self.data);
+};

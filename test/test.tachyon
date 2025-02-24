@@ -1,0 +1,4 @@
+include "src/main.tachyon";
+var x = NT.Tensor.fromShapeAndData([]);
+println(x);
+println(NT.Complex.I);
