@@ -681,6 +681,57 @@ return tachyon_internal::null;
 }
 return tachyon_internal::null;
 }))));
+tachyon_internal::set_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"matmul",(tachyon_internal::make_func(new TACHYON_FUNC([=](const std::vector<double>& _args) -> double {
+double self= _args[0];
+double other= _args[1];
+{
+return (*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"binaryTransform")))({self,other,tachyon_internal::make_func(new TACHYON_FUNC([=](const std::vector<double>& _args) -> double {
+double x= _args[0];
+double y= _args[1];
+{
+return (x)*(y);
+}
+return tachyon_internal::null;
+}))});
+}
+return tachyon_internal::null;
+}))));
+tachyon_internal::set_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"t",(tachyon_internal::make_func(new TACHYON_FUNC([=](const std::vector<double>& _args) -> double {
+double self= _args[0];
+{
+if((double)(((*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"ndim")))({self}))<(2.00000000000000000))){
+return self;
+}
+double rows=tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),0.0);
+double cols=tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),1.00000000000000000);
+double resultData=tachyon_internal::make_vec(new std::vector<double>({}));
+for(double i=0.0;((double)((i)<(cols)));i++) {{
+for(double j=0.0;((double)((j)<(rows)));j++) {{
+(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(VectorUtils),"pushBack")))({VectorUtils,resultData,(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"get")))({self,tachyon_internal::make_vec(new std::vector<double>({j,i}))})});
+(*tachyon_internal::decode_func(print))({j});
+(*tachyon_internal::decode_func(print))({tachyon_internal::make_str(new std::string(" "))});
+(*tachyon_internal::decode_func(println))({i});
+}}
+}}
+return (*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"fromShapeAndData")))({tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor"),tachyon_internal::make_vec(new std::vector<double>({cols,rows})),resultData});
+}
+return tachyon_internal::null;
+}))));
+tachyon_internal::set_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"matmul",(tachyon_internal::make_func(new TACHYON_FUNC([=](const std::vector<double>& _args) -> double {
+double self= _args[0];
+double other= _args[1];
+{
+double otherTransposed=(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(other),"t")))({other});
+double resultData=tachyon_internal::make_vec(new std::vector<double>({}));
+for(double i=0.0;((double)((i)<(tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),0.0))));i++) {{
+for(double j=0.0;((double)((j)<(tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(other),"shape"),1.00000000000000000))));j++) {{
+(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(VectorUtils),"pushBack")))({VectorUtils,resultData,(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj((*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"get")))({self,tachyon_internal::make_vec(new std::vector<double>({i}))})),"dot")))({(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"get")))({self,tachyon_internal::make_vec(new std::vector<double>({i}))}),(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(otherTransposed),"get")))({otherTransposed,tachyon_internal::make_vec(new std::vector<double>({j}))})})});
+}}
+}}
+return (*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"fromShapeAndData")))({tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor"),tachyon_internal::make_vec(new std::vector<double>({tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),0.0),tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(other),"shape"),1.00000000000000000)})),resultData});
+}
+return tachyon_internal::null;
+}))));
 tachyon_internal::set_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"sqrt",(tachyon_internal::make_func(new TACHYON_FUNC([=](const std::vector<double>& _args) -> double {
 double self= _args[0];
 {
@@ -981,6 +1032,10 @@ idxStart+=((tachyon_internal::get_subscript(idx,((selfNdim)-(i))-(1.000000000000
 }
 factor*=(tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),i));
 }}
+if(tachyon_internal::is_eq(((*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(idx),"size")))({idx})),(selfNdim))){
+(*tachyon_internal::decode_func(println))({tachyon_internal::make_str(new std::string("!!!"))});
+return (*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"fromShapeAndData")))({tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor"),tachyon_internal::make_vec(new std::vector<double>({1.00000000000000000})),tachyon_internal::make_vec(new std::vector<double>({(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"data")),"at")))({tachyon_internal::get_member(tachyon_internal::decode_obj(self),"data"),idxStart})}))});
+}
 double offset=1.00000000000000000;
 for(double i=idxSize;((double)((i)<(selfNdim)));i++) {{
 offset*=(tachyon_internal::get_subscript(tachyon_internal::get_member(tachyon_internal::decode_obj(self),"shape"),i));
@@ -1049,8 +1104,8 @@ return result;
 return tachyon_internal::null;
 }))));
 
-double x=(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"fromNested")))({tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor"),tachyon_internal::make_vec(new std::vector<double>({tachyon_internal::make_vec(new std::vector<double>({tachyon_internal::make_vec(new std::vector<double>({1.00000000000000000,2.00000000000000000})),tachyon_internal::make_vec(new std::vector<double>({3.00000000000000000,4.00000000000000000}))})),tachyon_internal::make_vec(new std::vector<double>({tachyon_internal::make_vec(new std::vector<double>({5.00000000000000000,6.00000000000000000})),tachyon_internal::make_vec(new std::vector<double>({7.00000000000000000,8.00000000000000000}))}))}))});
-(*tachyon_internal::decode_func(println))({x});
+double x=(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor")),"fromNested")))({tachyon_internal::get_member(tachyon_internal::decode_obj(NT),"Tensor"),tachyon_internal::make_vec(new std::vector<double>({tachyon_internal::make_vec(new std::vector<double>({1.00000000000000000,2.00000000000000000})),tachyon_internal::make_vec(new std::vector<double>({3.00000000000000000,4.00000000000000000}))}))});
+(*tachyon_internal::decode_func(println))({(*tachyon_internal::decode_func(tachyon_internal::get_member(tachyon_internal::decode_obj(x),"get")))({x,tachyon_internal::make_vec(new std::vector<double>({1.00000000000000000,1.00000000000000000}))})});
 
 tachyon_internal::free_all();
 return 0;
