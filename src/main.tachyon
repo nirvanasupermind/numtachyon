@@ -424,10 +424,7 @@ NT.Tensor.t = afunc (self) {
     var resultData = [];
     for(var i = 0; i < cols; i++) {
         for(var j = 0; j < rows; j++) {
-            VectorUtils.pushBack(resultData, self.get([j, i]));
-    print(j);
-    print(" ");
-    println(i);
+            VectorUtils.pushBack(resultData, self.data[j * rows + i]);
         }
     }
     return NT.Tensor.fromShapeAndData([cols, rows], resultData);
@@ -442,6 +439,24 @@ NT.Tensor.matmul = afunc (self, other) {
         }
     }
     return NT.Tensor.fromShapeAndData([self.shape[0], other.shape[1]], resultData);
+};
+
+NT.Tensor.kron = afunc (self, other) {
+    var m = self.shape[0];
+    var n = self.shape[1];
+    var p = other.shape[0];
+    var q = other.shape[1];
+    var rows = p * m;
+    var cols = q * n;
+    var resultData = [];
+    for(var i = 0; i < rows; i++) {
+        for(var j = 0; j < cols; j++) {
+            var t1 = self.data[Math.floor(i/p) * n + Math.floor(j/q)];
+            var t2 = other.data[i%p * n + j%q];
+            VectorUtils.pushBack(resultData, t1 * t2);
+        }
+    }
+    return NT.Tensor.fromShapeAndData([rows, cols], resultData);
 };
 
 
@@ -579,6 +594,10 @@ NT.Tensor.dot = afunc (self, other) {
     return self.mul(other).sum();
 };
 
+NT.Tensor.item = afunc (self) {
+    return self.data[0];
+};
+
 NT.Tensor.ndim = afunc (self) {
     return VectorUtils.size(self.shape);
 };
@@ -594,9 +613,8 @@ NT.Tensor.get = afunc (self, idx) {
         }
         factor *= self.shape[i];
     }    
-    if(idx.size() == selfNdim) {
-        println("!!!");
-        return NT.Tensor.fromShapeAndData([1], [self.data.at(idxStart)]);
+    if(idxSize == selfNdim) {
+        return NT.Tensor.fromShapeAndData([1], [self.data[idxStart]]);
     }
     var offset = 1;
     for(var i = idxSize; i < selfNdim; i++) {

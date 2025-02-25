@@ -1,3 +1,4 @@
 include "src/main.tachyon";
 var x = NT.Tensor.fromNested([[1,2],[3,4]]);
-println(x.get([1, 1]));
+var y = NT.Tensor.fromNested([[4,5],[6,7]]);
+println(x.kron(y));
