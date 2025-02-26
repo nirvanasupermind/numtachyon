@@ -1,4 +1,6 @@
 include "src/main.tachyon";
-var x = NT.Tensor.fromNested([1,2,3]);
-var y = NT.Tensor.fromNested([4,5,6]);
-println(x.cross(y));
+var x = NT.Tensor.fromNested([[1,2],[3,4]]);
+var y = NT.Tensor.fromNested([[4,5],[6,7]]);
+var z = NT.Tensor.fromNested([1,1]);
+println(x.vecdot(y));
+println(x.vecdot(z));

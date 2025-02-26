@@ -428,6 +428,23 @@ NT.Tensor.matmul = afunc (self, other) {
     return NT.Tensor.fromShapeAndData([self.shape[0], other.shape[1]], resultData);
 };
 
+NT.Tensor.vecdot = afunc (self, other) {
+    var resultData = [];
+    if(other.ndim() == 1) {
+        for(var i = 0; i < self.shape[0]; i++) {
+            VectorUtils.pushBack(resultData, self.get([i]).dot(other));
+        }
+        return NT.Tensor.fromShapeAndData([self.shape[0]], resultData);
+    } else {
+        var resultData = [];
+        for(var i = 0; i < self.shape[0]; i++) {
+            VectorUtils.pushBack(resultData, self.get([i]).dot(other.get([i])));
+        }
+        return NT.Tensor.fromShapeAndData([self.shape[0]], resultData);
+    }
+    return NT.Tensor.fromShapeAndData(self.shape, resultData);
+};
+
 NT.Tensor.kron = afunc (self, other) {
     var m = self.shape[0];
     var n = self.shape[1];
