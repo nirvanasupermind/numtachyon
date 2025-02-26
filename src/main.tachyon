@@ -445,6 +445,72 @@ NT.Tensor.vecdot = afunc (self, other) {
     return NT.Tensor.fromShapeAndData(self.shape, resultData);
 };
 
+NT.Tensor.det = afunc (self) {
+    var rows = self.shape[0];
+
+    // Base cases for small matrices
+    if (rows == 1) {
+        return self.data[0];
+    }
+    if (rows == 2) {
+        return self.data[0] * self.data[3] - self.data[1] * self.data[2];
+    }
+
+    return self.gaussianEliminationDet();
+};
+
+NT.Tensor.gaussianEliminationDet = afunc(self) {
+    var n = self.shape[0];
+    var matrix = VectorUtils.copy(self.data); // Copy to avoid modifying original array
+    var det = 1;
+
+    for (var i = 0; i < n; i++) {
+        var pivotIndex = i * n + i;
+        var pivot = matrix[pivotIndex];
+
+        // If the pivot is zero, find a row to swap
+        if (pivot == 0) {
+            var swapRow = -1;
+            for (var j = i + 1; j < n; j++) {
+                if (matrix[j * n + i] != 0) {
+                    swapRow = j;
+                    break;
+                }
+            }
+            if (swapRow == -1) {
+                return 0; // Singular matrix
+            }
+
+            // Swap rows in-place
+            for (var k = 0; k < n; k++) {
+                var temp = matrix[i * n + k];
+                matrix[i * n + k] = matrix[swapRow * n + k];
+                matrix[swapRow * n + k] = temp;
+            }
+            det *= -1; // Row swaps change sign of determinant
+            pivot = matrix[pivotIndex];
+        }
+
+        det *= pivot;
+
+        // Normalize the pivot row
+        for (var j = i + 1; j < n; j++) {
+            matrix[i * n + j] /= pivot;
+        }
+        matrix[pivotIndex] = 1;
+
+        // Eliminate below
+        for (var j = i + 1; j < n; j++) {
+            var factor = matrix[j * n + i];
+            for (var k = i; k < n; k++) {
+                matrix[j * n + k] -= factor * matrix[i * n + k];
+            }
+        }
+    }
+
+    return det;
+};
+
 NT.Tensor.kron = afunc (self, other) {
     var m = self.shape[0];
     var n = self.shape[1];
