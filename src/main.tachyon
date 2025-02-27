@@ -705,6 +705,24 @@ NT.Tensor.solve = afunc (self, other) {
     return self.pinv().matmul(other);
 };
 
+NT.Tensor.matrixPower = afunc (self, n) {
+    if(n == 0) {
+        return NT.Tensor.eye(self.shape[0], self.shape[0]);
+    } elif(n == 1) {
+        return self;
+    } else {
+        return self.matrixPower(n - 1).matmul(self);
+    }
+};
+
+NT.Tensor.matrixExp = afunc (self) {
+    var result = NT.Tensor.zerosLike(self);
+    for(var i = 0; i < 20; i++) {
+        result = result.add(self.matrixPower(i).div(Math.gamma(i + 1)));
+    }
+    return result;
+};
+
 NT.Tensor.sum = afunc (self) {
     return VectorUtils.accumulate(self.data, 0, afunc (x, y) {
         return x + y;
@@ -725,7 +743,6 @@ NT.Tensor.variance = afunc (self) {
     var temp = self.sub(self.mean());
     return temp.mul(temp);
 };
-
 
 NT.Tensor.std = afunc (self) {
     return self.variance().sqrt();
