@@ -198,7 +198,7 @@ NT.Tensor.fromNested = afunc (self, vec) {
         return {"shape": [size], "data": vec, "proto": NT.Tensor};
     }
     
-    var fromFirstElem = NT.Tensor.fromNested(vec[0]);
+    var fromFirstElem = NT.ComplexTensor.fromNested(vec[0]);
     var shape = VectorUtils.concat([size],  fromFirstElem.shape);
     var data = fromFirstElem.data;
     for(var i = 1; i < size; i++) {
@@ -843,7 +843,7 @@ NT.ComplexTensor.fromShapeAndData = afunc (self, shape, data) {
 };
 
 NT.ComplexTensor.fromNested = afunc (self, vec) {
-    if(vec.proto == NT.Complex) {
+    if(typeOf(vec) == 6) {
         return {"shape": [], "data": vec, "proto": NT.ComplexTensor};
     }
 
@@ -945,11 +945,11 @@ NT.ComplexTensor.tri = afunc (self, n, m, k) {
     return NT.ComplexTensor.fromShapeAndData([n, m], data);
 };
 
-NT.Tensor.tril = afunc (self) {
-    return NT.TensComplexTensoror.tri(self.shape[0], self.shape[1]).mul(self);
+NT.ComplexTensor.tril = afunc (self) {
+    return NT.ComplexTensor.tri(self.shape[0], self.shape[1]).mul(self);
 };
 
-NT.Tensor.triu = afunc (self) {
+NT.ComplexTensor.triu = afunc (self) {
     var data = [];
     for(var i = 0; i < VectorUtils.size(self.data); i++) {
         if(i % self.shape[1] < Math.floor(i / self.shape[1])) {
@@ -1020,8 +1020,163 @@ NT.ComplexTensor.pow = afunc (self, other) {
     });
 };
 
+NT.ComplexTensor.ndim = afunc (self) {
+    return VectorUtils.size(self.shape);
+};
+
+
+NT.ComplexTensor.sqrt = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.sqrt();
+    });
+};
+
+NT.ComplexTensor.cbrt = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.cbrt();
+    });
+};
+
+NT.ComplexTensor.log = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.log();
+    });
+};
+
+NT.ComplexTensor.log2 = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.log2();
+    });
+};
+
+NT.ComplexTensor.log10 = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.log10();
+    });
+};
+
+NT.ComplexTensor.sin = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.sin();
+    });
+};
+
+NT.ComplexTensor.cos = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.cos();
+    });
+};
+
+NT.ComplexTensor.tan = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.tan();
+    });
+};
+
+NT.ComplexTensor.asin = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.asin();
+    });
+};
+
+NT.ComplexTensor.acos = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.acos();
+    });
+};
+
+NT.ComplexTensor.atan = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.atan();
+    });
+};
+
+NT.ComplexTensor.sinh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.sinh();
+    });
+};
+
+
+NT.ComplexTensor.cosh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.cosh();
+    });
+};
+
+
+NT.ComplexTensor.tanh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.tanh();
+    });
+};
+
+NT.ComplexTensor.asinh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.asinh();
+    });
+};
+
+NT.ComplexTensor.acosh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.acosh();
+    });
+};
+
+NT.ComplexTensor.atanh = afunc (self) {
+    return self.transform(afunc (x) {
+        return x.atanh();
+    });
+};
+
+NT.ComplexTensor.t = afunc (self) {
+    if(self.ndim() < 2) {
+        return self;
+    }
+
+    var rows = self.shape[0];
+    var cols = self.shape[1];
+
+    var resultData = [];
+    for(var i = 0; i < cols; i++) {
+        for(var j = 0; j < rows; j++) {
+            VectorUtils.pushBack(resultData, self.data[j * rows + i]);
+        }
+    }
+    return NT.ComplexTensor.fromShapeAndData([cols, rows], resultData);
+};
+
+NT.ComplexTensor.matmul = afunc (self, other) {
+    var otherTransposed = other.t();
+    var resultData = [];
+    for(var i = 0; i < self.shape[0]; i++) {
+        for(var j = 0; j < other.shape[1]; j++) {
+            VectorUtils.pushBack(resultData, self.get([i]).dot(otherTransposed.get([j])));
+        }
+    }
+    return NT.ComplexTensor.fromShapeAndData([self.shape[0], other.shape[1]], resultData);
+};
+
+
+NT.ComplexTensor.sum = afunc (self) {
+    return VectorUtils.accumulate(self.data, NT.Complex.ZERO, afunc (x, y) {
+        return x.add(y);
+    });
+};
+
+NT.ComplexTensor.prod = afunc (self) {
+    return VectorUtils.accumulate(self.data, NT.Complex.ONE, afunc (x, y) {
+        return x.mul(y);
+    });
+};
+
+NT.ComplexTensor.dot = afunc (self, other) {
+    return self.mul(other).sum();
+};
+
 
 NT.ComplexTensor.get = afunc (self, idx) {
+    println(idx);
     var idxSize = VectorUtils.size(idx);
     var selfNdim = self.ndim();
     var idxStart = 0;
