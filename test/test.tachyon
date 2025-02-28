@@ -1,3 +1,1 @@
-include "src/main.tachyon";
-var x = NT.ComplexTensor.fromNested([[NT.Complex.fromRect(1, 2), NT.Complex.fromRect(3, 4)],[NT.Complex.fromRect(5, 6), NT.Complex.fromRect(7, 8)]]);
-println(x.t());
+println(Math.atan2(2,3));

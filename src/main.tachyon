@@ -859,13 +859,13 @@ NT.ComplexTensor.fromNested = afunc (self, vec) {
     for(var i = 1; i < size; i++) {
         data = VectorUtils.concat(data, NT.ComplexTensor.fromNested(vec[i]).data);
     }
+    
     return {
         "shape": shape,
         "data": data,
         "proto": NT.ComplexTensor
     };
 };
-
 
 NT.ComplexTensor.eye = afunc (self, n, m) {
     var data = [];

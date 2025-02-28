@@ -1,0 +1,39 @@
+include "src/main.tachyon";
+var x = NT.Complex.fromRect(3, 2);
+var y = NT.Complex.fromRect(2, 4);
+var tests = [
+    ["neg", x.neg(), "-3+-2i"],
+    ["add", x.add(y), "5+6i"],
+    ["sub", x.sub(y), "1+-2i"],
+    ["mul", x.mul(y), "-2+16i"],
+    ["div", x.div(y), "0.7+-0.4i"],
+    ["eq", x.eq(y), "0"],
+    ["ne", x.ne(y), "1"],
+    ["abs", x.abs(), "3.60555"],
+    ["arg", x.arg(), "0.588003"],
+    ["norm", x.norm(), "13"]
+];
+var successes = 0;
+for(var i = 0; i < VectorUtils.size(tests); i++) {
+    var testName = tests[i][0];
+    var expected = tests[i][2];
+    var actual = StringUtils.repr(tests[i][1]);
+    if(StringUtils.eq(expected, actual)) {
+        print("test ");
+        print(testName);
+        print(" succeeded with value ");
+        println(actual);
+        successes++;
+    } else {
+        print("test ");
+        print(testName);
+        print(" failed with value ");
+        println(actual);
+    }
+}
+
+print(successes);
+print("/");
+print(VectorUtils.size(tests));
+print(" ");
+println("tests passed");
