@@ -153,18 +153,18 @@ NT.Complex.tanh = afunc (self) {
 
 NT.Complex.asinh = afunc (self) {
     var t1 = self.mul(self).add(NT.Complex.ONE).sqrt(); 
-    return self.add(t1).ln();
+    return self.add(t1).log();
 };
 
 NT.Complex.acosh = afunc (self) {
     var t1 = self.mul(self).sub(NT.Complex.ONE).sqrt(); 
-    return self.add(t1).ln();
+    return self.add(t1).log();
 };
 
 NT.Complex.atanh = afunc (self) {
     var t1 = self.add(1);
     var t2 = NT.Complex.ONE.sub(self);
-    return t1.div(t2).ln().div(2);
+    return t1.div(t2).log().div(2);
 };
 
 NT.Complex.toString = afunc (self) {
