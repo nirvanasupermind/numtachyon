@@ -11,7 +11,18 @@ var tests = [
     ["ne", x.ne(y), "1"],
     ["abs", x.abs(), "3.60555"],
     ["arg", x.arg(), "0.588003"],
-    ["norm", x.norm(), "13"]
+    ["norm", x.norm(), "13"],
+    ["conj", x.conj(), "3+-2i"],
+    ["exp", x.exp(), "-8.35853+18.2637i"],
+    ["log", x.log(), "1.28247+0.588003i"],
+    ["pow", x.pow(y), "1.23699+
+    1.28247
+    1.23699
+    0.588003
+    0.58800
+
+
+
 ];
 var successes = 0;
 for(var i = 0; i < VectorUtils.size(tests); i++) {
