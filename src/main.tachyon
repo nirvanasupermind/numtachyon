@@ -16,7 +16,7 @@ NT.Complex.neg = afunc (self) {
 
 NT.Complex.add = afunc (self, other) {
     if(typeOf(other) == 0) {
-        return NT.Complex.fromRect(self.real + other, self.imag + other); 
+        return NT.Complex.fromRect(self.real + other, self.imag + other);
     } else {
         return NT.Complex.fromRect(self.real + other.real, self.imag + other.imag);
     } 
@@ -164,7 +164,7 @@ NT.Complex.acosh = afunc (self) {
 NT.Complex.atanh = afunc (self) {
     var t1 = self.add(1);
     var t2 = NT.Complex.ONE.sub(self);
-    return t1.log().sub(t2.log()).div(2);
+    return t1.log().div(2).sub(t2.log().div(2));
 };
 
 NT.Complex.toString = afunc (self) {
