@@ -99,11 +99,11 @@ NT.Complex.sin = afunc (self) {
 };
 
 NT.Complex.cos = afunc (self) {
-    return NT.Complex.fromRect(Math.cos(self.real) * Math.cosh(self.imag), Math.sin(self.real) * Math.sinh(self.imag));
+    return NT.Complex.fromRect(Math.cos(self.real) * Math.cosh(self.imag), -Math.sin(self.real) * Math.sinh(self.imag));
 };
 
 NT.Complex.tan = afunc (self) {
-    return self.sin() / self.cos();
+    return self.sin().div(self.cos());
 };
 
 NT.Complex.asin = afunc (self) {
@@ -164,7 +164,7 @@ NT.Complex.acosh = afunc (self) {
 NT.Complex.atanh = afunc (self) {
     var t1 = self.add(1);
     var t2 = NT.Complex.ONE.sub(self);
-    return t1.div(t2).log().div(2);
+    return t1.log().sub(t2.log()).div(2);
 };
 
 NT.Complex.toString = afunc (self) {
